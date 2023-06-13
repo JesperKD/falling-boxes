@@ -1,0 +1,40 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+@keyframes fallingAnimation {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(calc(var(--game-height) - var(--letter-size)));
+  }
+}
+
+.game-area {
+  position: relative;
+  width: 400px;
+  height: 800px;
+  border: 5px solid black;
+  margin-top: 20px;
+  overflow: hidden;
+}
+
+.letter {
+  position: absolute;
+  animation: fallingAnimation 1s linear forwards;
+  border: 1px solid black;
+}
+
+.falling {
+  animation-play-state: running;
+}
+
+.stopped {
+  animation-play-state: paused;
+}
+
