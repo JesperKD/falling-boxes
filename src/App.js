@@ -124,13 +124,6 @@ const App = () => {
     }
   }, [score]);
 
-  // Function for setting the game over state
-  useEffect(() => {
-    if (stoppedCount >= 20) {
-      setGameOver(true);
-    }
-  }, [stoppedCount]);
-
   // The rendered components
   return (
     <div className="container">
