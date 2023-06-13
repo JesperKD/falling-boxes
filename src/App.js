@@ -55,7 +55,8 @@ const App = () => {
     };
 
     //interval frequency of letters spawning
-    const intervalId = setInterval(spawnLetter, 50);
+    const intervalId = setInterval(spawnLetter, Math.floor(Math.random() * 250) + 0);
+
     return () => {
       clearInterval(intervalId);
     };
