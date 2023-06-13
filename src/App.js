@@ -3,21 +3,23 @@ import './App.css';
 import Letter from './Components/Letter';
 
 const App = () => {
-  const [letters, setLetters] = useState([]);
-  const [score, setScore] = useState(0);
-  const [gameOver, setGameOver] = useState(false);
-  const [stoppedCount, setStoppedCount] = useState(0);
+  const [letters, setLetters] = useState([]); // Array of letters in play
+  const [score, setScore] = useState(0); // Score count
+  const [gameOver, setGameOver] = useState(false); // Game over state boolean
+  const [stoppedCount, setStoppedCount] = useState(0); // Amount of stopped letters
   const [fallingSpeed, setFallingSpeed] = useState(2); // Initial falling speed
-  const gameHeight = 750;
-  const gameWidth = 350;
+  const gameHeight = 750; // Height value of game area
+  const gameWidth = 350; // Width value of game area
 
   useEffect(() => {
     // Function for creating/spawning new letters
     const spawnLetter = () => {
       if (letters.length < 100 && !gameOver) {
+        //Randomize Values
         const randomLetter = String.fromCharCode(65 + Math.floor(Math.random() * 5));
         const randomSize = Math.floor(Math.random() * 50) + 20;
         const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+        //Create object with values
         const letter = {
           value: randomLetter,
           size: randomSize,
@@ -26,11 +28,12 @@ const App = () => {
           falling: true,
           left: Math.floor(Math.random() * (gameWidth - 50)),
         };
+        //Add newly created object to letter array
         setLetters((prevLetters) => [...prevLetters, letter]);
       }
     };
 
-    // Interval frequency of letters spawning
+    // Random frequency of letters spawning
     const intervalId = setInterval(spawnLetter, Math.floor(Math.random() * 250) + 0);
 
     return () => {
@@ -44,17 +47,17 @@ const App = () => {
       setLetters((prevLetters) =>
         prevLetters.map((letter) => {
           if (letter.position >= gameHeight - letter.size && letter.falling) {
-            if (stoppedCount >= 20) {
+            if (stoppedCount >= 20) { // Checks if 20 letters have hit bottom
               clearInterval(intervalId);
-              setGameOver(true);
+              setGameOver(true); // Ends the game
               return letter;
             }
-            setStoppedCount((prevCount) => prevCount + 1);
+            setStoppedCount((prevCount) => prevCount + 1); // adds the stopped letter to the counter
             return { ...letter, falling: false, position: gameHeight - letter.size };
           }
           if (letter.falling) {
-            const newPosition = letter.position + fallingSpeed; // Adjust the falling speed
-            return { ...letter, position: newPosition };
+            const newPosition = letter.position + fallingSpeed; // Get new position of letter
+            return { ...letter, position: newPosition }; // Returns letter with updated position
           }
           return letter;
         })
@@ -74,7 +77,7 @@ const App = () => {
             }
             return true; // Include all other letters in the filtered array
           });
-          setScore((prevScore) => prevScore + scoreIncrement);
+          setScore((prevScore) => prevScore + scoreIncrement); // update score with amount of letters removed
           return filteredLetters;
         });
       }
