@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import Letter from './Components/Letter';
 
 const App = () => {
   const [letters, setLetters] = useState([]);
@@ -9,33 +10,6 @@ const App = () => {
   const [fallingSpeed, setFallingSpeed] = useState(2); // Initial falling speed
   const gameHeight = 750;
   const gameWidth = 350;
-
-  // Object and visual component of the letters
-  const Letter = ({ letter }) => {
-    const letterRef = useRef();
-
-    useEffect(() => {
-      if (!letter.falling) {
-        letterRef.current.style.animation = 'none';
-      }
-    }, [letter.falling]);
-
-    return (
-      <div
-        className={`letter ${letter.falling ? 'falling' : 'stopped'}`}
-        style={{
-          fontSize: letter.size,
-          backgroundColor: letter.color,
-          top: letter.position,
-          left: letter.left,
-          animationDuration: `${1 / fallingSpeed}s`, // Adjust the falling animation duration based on speed
-        }}
-        ref={letterRef}
-      >
-        {letter.value}
-      </div>
-    );
-  };
 
   useEffect(() => {
     // Function for creating/spawning new letters
@@ -117,8 +91,8 @@ const App = () => {
     };
   }, [gameOver, letters, stoppedCount, fallingSpeed]);
 
-  // Function for checking and updating the falling speed based on the score
   useEffect(() => {
+    // Function for checking and updating the falling speed based on the score
     if (score % 100 === 0 && score > 0) {
       setFallingSpeed((prevSpeed) => prevSpeed * 2);
     }
@@ -133,7 +107,7 @@ const App = () => {
       {!gameOver && <div className="speed">Speed: {fallingSpeed / 2}</div>}
       <div className="game-area">
         {letters.map((letter, index) => (
-          <Letter key={index} letter={letter} />
+          <Letter key={index} letter={letter} fallingSpeed={fallingSpeed} gameHeight={gameHeight} />
         ))}
       </div>
       <div className="score">Stopped letters: {stoppedCount}</div>
