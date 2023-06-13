@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
+// Class for the Letter object and it's visuals
 const Letter = ({ letter, fallingSpeed, gameHeight }) => {
   const letterRef = useRef();
 
