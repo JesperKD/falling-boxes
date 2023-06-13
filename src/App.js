@@ -6,10 +6,11 @@ const App = () => {
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [stoppedCount, setStoppedCount] = useState(0);
+  const [fallingSpeed, setFallingSpeed] = useState(2); // Initial falling speed
   const gameHeight = 750;
   const gameWidth = 350;
 
-  //Object and visual component of the letters
+  // Object and visual component of the letters
   const Letter = ({ letter }) => {
     const letterRef = useRef();
 
@@ -27,6 +28,7 @@ const App = () => {
           backgroundColor: letter.color,
           top: letter.position,
           left: letter.left,
+          animationDuration: `${1 / fallingSpeed}s`, // Adjust the falling animation duration based on speed
         }}
         ref={letterRef}
       >
@@ -36,11 +38,11 @@ const App = () => {
   };
 
   useEffect(() => {
-    //Function for creating/spawning new letters
+    // Function for creating/spawning new letters
     const spawnLetter = () => {
       if (letters.length < 100 && !gameOver) {
         const randomLetter = String.fromCharCode(65 + Math.floor(Math.random() * 5));
-        const randomSize = Math.floor(Math.random() * 30) + 15;
+        const randomSize = Math.floor(Math.random() * 50) + 20;
         const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
         const letter = {
           value: randomLetter,
@@ -54,7 +56,7 @@ const App = () => {
       }
     };
 
-    //interval frequency of letters spawning
+    // Interval frequency of letters spawning
     const intervalId = setInterval(spawnLetter, Math.floor(Math.random() * 250) + 0);
 
     return () => {
@@ -63,21 +65,21 @@ const App = () => {
   }, [gameOver, letters]);
 
   useEffect(() => {
-    //Function for moving and updating position of letters
+    // Function for moving and updating position of letters
     const moveLetters = () => {
       setLetters((prevLetters) =>
         prevLetters.map((letter) => {
           if (letter.position >= gameHeight - letter.size && letter.falling) {
             if (stoppedCount >= 20) {
               clearInterval(intervalId);
-              setGameOver(true)
+              setGameOver(true);
               return letter;
             }
             setStoppedCount((prevCount) => prevCount + 1);
             return { ...letter, falling: false, position: gameHeight - letter.size };
           }
           if (letter.falling) {
-            const newPosition = letter.position + 5;
+            const newPosition = letter.position + fallingSpeed; // Adjust the falling speed
             return { ...letter, position: newPosition };
           }
           return letter;
@@ -85,7 +87,7 @@ const App = () => {
       );
     };
 
-    //Function for handling key presses made by the user, and act accordingly
+    // Function for handling key presses made by the user and acting accordingly
     const handleKeyPress = (event) => {
       if (!gameOver) {
         const pressedLetter = event.key.toUpperCase();
@@ -103,8 +105,8 @@ const App = () => {
         });
       }
     };
-   
-    //Interval for updating letter positions
+
+    // Interval for updating letter positions
     const intervalId = setInterval(moveLetters, 50);
 
     document.addEventListener('keydown', handleKeyPress);
@@ -113,14 +115,29 @@ const App = () => {
       clearInterval(intervalId);
       document.removeEventListener('keydown', handleKeyPress);
     };
-  }, [gameOver, letters, stoppedCount]);
+  }, [gameOver, letters, stoppedCount, fallingSpeed]);
 
-  //The rendered components
+  // Function for checking and updating the falling speed based on the score
+  useEffect(() => {
+    if (score % 100 === 0 && score > 0) {
+      setFallingSpeed((prevSpeed) => prevSpeed * 2);
+    }
+  }, [score]);
+
+  // Function for setting the game over state
+  useEffect(() => {
+    if (stoppedCount >= 20) {
+      setGameOver(true);
+    }
+  }, [stoppedCount]);
+
+  // The rendered components
   return (
     <div className="container">
-      {!gameOver && <h1>Falling Letters Game</h1>}
+      {!gameOver && <h2>Falling Letters Game</h2>}
       {gameOver && <h1 className="game-over">Game Over</h1>}
       <div className="score">Score: {score}</div>
+      {!gameOver && <div className="speed">Speed: {fallingSpeed / 2}</div>}
       <div className="game-area">
         {letters.map((letter, index) => (
           <Letter key={index} letter={letter} />
